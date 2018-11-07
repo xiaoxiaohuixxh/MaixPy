@@ -91,6 +91,10 @@ void esp8285_at_response(uint8_t mode)
 	// } 
 }
 uint8_t temp_rev_str[1024];
+uint8_t *rev_buf_addr()
+{
+	return temp_rev_str;
+}
 uint8_t *esp8285_check_cmd(uint8_t *str)
 {
 	uint8_t *p;
@@ -105,13 +109,12 @@ uint8_t *esp8285_check_cmd(uint8_t *str)
 		if(*temp_rev_str_p == *temp_p)
 		{
 			temp_p++;
-			temp_rev_str_p++;
 			//printf("%c\n",*temp_rev_str_p);
 		}else{
 			//printf("temp_p init\n");
 			temp_p = str;
-			temp_rev_str_p = temp_rev_str;
 		}
+		temp_rev_str_p++;
 	}
 	
 	p = (uint8_t *)(strstr(temp_rev_str,str));

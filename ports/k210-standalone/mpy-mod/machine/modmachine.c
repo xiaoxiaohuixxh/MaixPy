@@ -23,6 +23,7 @@ STATIC const mp_map_elem_t machine_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_zmodem), MP_ROM_PTR(&machine_zmodem_type) },
     { MP_ROM_QSTR(MP_QSTR_fpioa), MP_ROM_PTR(&machine_fpioa_type) },
     { MP_ROM_QSTR(MP_QSTR_ws2812), MP_ROM_PTR(&machine_ws2812_type) },
+     { MP_ROM_QSTR(MP_QSTR_esp8285), MP_ROM_PTR(&machine_esp8285_type) },
     { MP_ROM_QSTR(MP_QSTR_test), MP_ROM_PTR(&machine_test_type) },
     { MP_ROM_QSTR(MP_QSTR_devmem), MP_ROM_PTR(&machine_devmem_type) },
 };

@@ -14,7 +14,7 @@ uint8_t esp8285_quit_trans(void);
 void esp8285_get_wanip(uint8_t* ipbuf);
 void esp8285_init(void);
 uint32_t esp8285_rev_data(uint8_t *data,uint32_t size,uint32_t waittime);
-
+uint8_t *rev_buf_addr();
 #endif //__ESP8285_H
 
 

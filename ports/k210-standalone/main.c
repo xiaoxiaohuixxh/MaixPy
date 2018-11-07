@@ -47,7 +47,69 @@ static char heap[MPY_HEAP_SIZE];
 #endif
 
 void do_str(const char *src, mp_parse_input_kind_t input_kind);
+/*
+void test_board_driver(void)
+{
+    uint8_t ip_str[100];
+    uint8_t send_buf[200];
+    uint8_t rev_buf[200];
+    fpioa_set_function(6,64);
+    fpioa_set_function(7,65);
+    //fpioa_set_function(8,56);
+    //gpio_set_pin(0, GPIO_PV_HIGH);
+    //msleep(1);
+    //gpio_set_pin(0, GPIO_PV_LOW);
+    //msleep(1);
+    esp8285_init();
+    esp8285_wifista_config("Sipeed_2.4G","Sipeed123.");
+    //esp8285_get_wanip(ip_str);
+    //printf("\nlocal ip:%s",ip_str);
+    esp8285_send_cmd("AT+PING=\"www.baidu.com\"","OK",1);
 
+    sprintf(send_buf,"AT+CIPSTART=\"TCP\",\"%s\",%s","api.seniverse.com","80");//116.62.81.138
+	esp8285_send_cmd(send_buf,"OK",1);
+    sprintf(send_buf,"GET http://api.seniverse.com/v3/weather/now.json?key=x3owc7bndhbvi8oq&location=shenzhen&language=zh-Hans&unit=c\n\n");
+    esp8285_send_cmd("AT+CIPMODE=0","OK",1);
+    uint8_t temp_code_buf[200];
+    sprintf(temp_code_buf,"AT+CIPSEND=%d",strlen(send_buf));
+    esp8285_send_cmd(temp_code_buf,"OK",1);
+    
+    esp8285_send_data(send_buf,strlen(send_buf));
+
+    //wait res
+    
+    esp8285_check_cmd("OK");
+    esp8285_check_cmd("+IPD,");
+    printf("data earch\n");
+    //esp8285_quit_trans();
+    
+    uint32_t temp_len = 0;
+    temp_len = 300;
+    temp_len = esp8285_rev_buflen(":");
+    uint16_t len;
+    uint8_t *temp_rev_buf_p;
+    temp_rev_buf_p = rev_buf;
+    uint32_t timeout = 10000;
+    uint32_t temp_timeout = timeout;
+    while(temp_len > 0 && temp_timeout > 0)
+    {
+        len = esp8285_rev_data(temp_rev_buf_p,temp_len,10000);
+        usleep(100);
+        temp_len -= len;temp_rev_buf_p += len;
+        temp_timeout--;
+        if(len > 0)
+            temp_timeout = timeout;
+        if(strstr(rev_buf,"}]}"))
+            break;
+        if(len >0)
+            printf("len %d rev_data %x %x %x %s\n",len,rev_buf[0],rev_buf[1],rev_buf[2],rev_buf);
+    }
+
+    printf("res len %d\n",temp_len);
+    printf("rev_data %s\n",rev_buf);
+    //esp8285_quit_trans();
+}
+*/
 int main()
 {
     uint64_t core_id = current_coreid();
