@@ -107,15 +107,8 @@ STATIC mp_obj_t machine_esp8285_init_helper(machine_esp8285_obj_t *self, mp_uint
 	mp_obj_str_get_buffer(args[ARG_passwd].u_obj, &buf_pswd, MP_BUFFER_READ);
 	unsigned char *id_ptr =buf_id.buf;
 	unsigned char *pswd_ptr =buf_pswd.buf;
-	printf("id is %s\n",id_ptr);
-	printf("passwd is %s\n",pswd_ptr);
-	/*
-	if(buf_id.len == 0 || buf_pswd.len == 0)
-	{
-		mp_raise_ValueError("parameter is empty\n");
-	}
-	*/
-
+	//printf("id is %s\n",id_ptr);
+	//printf("passwd is %s\n",pswd_ptr);	
 	esp8285_wifista_config(id_ptr,pswd_ptr);
 	/*
 	int res = 1;

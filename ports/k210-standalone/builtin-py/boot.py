@@ -5,6 +5,7 @@ import os
 import machine
 import common
 import app
+import socket
 #pin_init=common.pin_init()
 #pin_init.init()
 #test_gpio_pin_num=15
@@ -19,4 +20,6 @@ file_list = os.ls()
 for i in range(len(file_list)):
     if file_list[i] == '/init.py':
         import init
-
+wifi=machine.esp8285()
+wifi.init("Sipeed_2.4G","Sipeed123.")
+addr=socket.getaddrinfo("www.baidu.com",80)[0][-1]

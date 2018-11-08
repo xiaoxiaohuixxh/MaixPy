@@ -27,7 +27,6 @@ INC += -I$(TOP)/lib/timeutils
 INC += -I$(MPY_MOD_PATH)/machine/include
 INC += -I$(MPY_MOD_PATH)/uos/include
 INC += -I$(MPY_MOD_PATH)/app/include
-#INC += -I$(MPY_MOD_PATH)/socket/include
 
 # board drivers header
 INC += -I$(BOARD_DRIVERS_PATH)/include
@@ -144,7 +143,7 @@ MODULES_SRC_C= \
 		$(MPY_MOD_PATH)/app/modapp.c \
 		$(MPY_MOD_PATH)/app/vi.c \
 		$(MPY_MOD_PATH)/app/app_vi.c\
-		$(MPY_MOD_PATH)/socket/modusocket.c
+		$(MPY_MOD_PATH)/socket/modsocket.c
 
 
 LIB_SRC_C ?=
@@ -221,7 +220,8 @@ PY_SRC_C = \
 		lib/utils/interrupt_char.c \
 		lib/utils/pyexec.c \
 		lib/libc/string0.c \
-		lib/mp-readline/readline.c 
+		lib/mp-readline/readline.c \
+		lib/netutils/netutils.c
 	
 ASM_SRCS = $(SDK_PATH)/lib/bsp/crt.S
 
