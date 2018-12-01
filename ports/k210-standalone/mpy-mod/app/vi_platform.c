@@ -3,9 +3,9 @@
 #define ROWS 24
 #define COLUMNS 80
 //buf for read buffer, notice buffer, etc.. should >= 64
-#define _BUFSIZ  512	
+#define _BUFSIZ  2048	
 //buf for hold the whole file*2, orginal is 10KB
-#define MIN_FILE (1024*4)
+#define MIN_FILE (0)
 //buf for status line.. should >= 64
 #define STATUS_LEN (200)
 
@@ -33,7 +33,8 @@
 #include "py/lexer.h"
 #endif
 
-#include "uarths.h"
+uint32_t file_sz = 0;
+char* g_fn = NULL;
 extern ring_buff_t *ring_recv_hs;
 //functions
 /****************** stdin_select *******************/
@@ -67,7 +68,7 @@ static int stdin_select(int t)
 
 /******************file & console operation*******************/
 #if 1
-static spiffs_file fd;
+static spiffs_file g_fd;
 static int _open(char* fn, int flag)
 {
     //const char* mode;
@@ -77,13 +78,15 @@ static int _open(char* fn, int flag)
     case O_RDWR: mode = "a+";break;
     case O_RDONLY: mode = "r";break;
     case O_WRONLY: mode = "w";break;
-    case O_WRONLY|O_CREAT|O_TRUNC: mode = "w+";break;
+    case O_WRONLY|O_CREAT|	: mode = "w+";break;
     default: mode = "r";break;
     }*/
     //return (int)fopen(fn, (char*)mode);
-    uint8_t found = 0;
-
+   
     spiffs_DIR dir;
+	uint8_t found = 0;
+	g_fn = malloc(strlen(fn));
+	strcpy(g_fn, fn);
     if (!SPIFFS_opendir (&fs, "/", &dir))
         mp_raise_OSError("[MAIXPY]VI:Open dir err");
     struct spiffs_dirent de;
@@ -92,23 +95,22 @@ static int _open(char* fn, int flag)
         if(strcmp(fn, de.name)==0)
         {
             found = 1;
-            fd =SPIFFS_open(&fs,fn, SPIFFS_RDWR, 0);//SPIFFS_CREAT | SPIFFS_O_TRUNC|
+            g_fd =SPIFFS_open(&fs,fn, SPIFFS_RDWR, 0);//SPIFFS_CREAT | SPIFFS_O_TRUNC|
             break;
         }
     }
     SPIFFS_closedir (&dir);
 
     if(found == 0)
-        fd =SPIFFS_open(&fs,fn, SPIFFS_CREAT | SPIFFS_O_TRUNC| SPIFFS_RDWR, 0);
+        g_fd =SPIFFS_open(&fs,fn, SPIFFS_CREAT | SPIFFS_O_TRUNC| SPIFFS_RDWR, 0);
     
-    if(fd == -1){
+    if(g_fd == -1){
         mp_raise_OSError(MP_EIO);
         return 0;
     }else {
-        fd = fd + 10;
-        return (int)fd;
+        g_fd = g_fd + 10;
+        return (int)g_fd;
       }
-    //return open(fn,flag);
 }
 
 int c_read(Byte* p, int size)	//console read
@@ -124,8 +126,9 @@ int c_read(Byte* p, int size)	//console read
 }
 int _read(int fd, Byte* p, int size)
 {   int tmp=size;
+	char tmpch[10];
     if(fd > 10) {
-        SPIFFS_read(&fs,(spiffs_file)(fd-10), p, size);
+		SPIFFS_read(&fs,(spiffs_file)(fd-10), p, size);
     }
     else tmp = c_read(p, size);
     return tmp;
@@ -141,8 +144,20 @@ int c_write(Byte* p, int size)	//console write
 int _write(int fd, Byte* p, int size)
 {   int tmp=size;
     if(fd > 10){
-        SPIFFS_write(&fs,(spiffs_file)(fd-10), p, size);
 
+		SPIFFS_close(&fs, fd);
+		SPIFFS_remove(&fs, g_fn);
+		g_fd =SPIFFS_open(&fs,g_fn, SPIFFS_CREAT | SPIFFS_O_TRUNC| SPIFFS_RDWR, 0);
+		if((spiffs_file)(fd-10) == g_fd)
+		{
+			SPIFFS_lseek(&fs, (spiffs_file)(fd-10), 0, SPIFFS_SEEK_SET);
+	        SPIFFS_write(&fs,(spiffs_file)(fd-10), p, size);
+			SPIFFS_fflush(&fs, (spiffs_file)(fd-10));
+		}
+		else
+		{
+			//...
+		}
     }
     else tmp = c_write(p, size);
     return tmp;
